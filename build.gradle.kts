@@ -11,6 +11,7 @@ repositories {
 
 dependencies {
     implementation(kotlin("test"))
+    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.8")
 }
 
 tasks.test {

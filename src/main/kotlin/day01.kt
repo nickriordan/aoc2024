@@ -1,3 +1,6 @@
+import kotlinx.collections.immutable.mutate
+import kotlinx.collections.immutable.persistentMapOf
+import kotlinx.collections.immutable.toPersistentList
 import kotlin.math.absoluteValue
 
 fun main() {
@@ -1004,14 +1007,18 @@ fun main() {
         85400   15291
     """.trimIndent()
 
-    val data = input.lines().map { it.split("   ") }.map { (a, b) -> a.toInt() to b.toInt() }
-    val firstList = data.map { it.first }
-    val secondList = data.map { it.second }
+    val data =
+        input.lines().asSequence().map { it.split("   ") }.map { (a, b) -> a.toInt() to b.toInt() }.toPersistentList()
+
+    val firstList = data.asSequence().map { it.first }.toPersistentList()
+    val secondList = data.asSequence().map { it.second }.toPersistentList()
 
     fun part1() = firstList.sorted().zip(secondList.sorted()).sumOf { (a, b) -> (a - b).absoluteValue }
 
-    fun part2() = secondList.groupBy { it }.map { it.key to it.value.size }.toMap().let { secondListCounts ->
-        firstList.sumOf { it * (secondListCounts[it] ?: 0) }
+    fun part2() = secondList.fold(persistentMapOf<Int, Int>()) { acc, v ->
+        acc.mutate { it[v] = it.getOrDefault(v, 0) + 1 }
+    }.let { secondListCounts ->
+        firstList.sumOf { it * secondListCounts.getOrDefault(it, 0) }
     }
 
     println(part1())
