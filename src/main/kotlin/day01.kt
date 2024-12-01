@@ -5,8 +5,8 @@ import kotlin.math.absoluteValue
 
 fun main() {
     val data = loadFileSplitLine("day01.txt")
-    val firstList = data.asSequence().map { it[0].toInt() }.toPersistentList()
-    val secondList = data.asSequence().map { it[1].toInt() }.toPersistentList()
+    val firstList = data.map { it[0].toInt() }.toPersistentList()
+    val secondList = data.map { it[1].toInt() }.toPersistentList()
 
     fun part1() = firstList.sorted().zip(secondList.sorted()).sumOf { (a, b) -> (a - b).absoluteValue }
 
