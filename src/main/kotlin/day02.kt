@@ -1,5 +1,5 @@
 fun main() {
-    val data = loadFileSplitLine("day02-data.txt").map { it.map { v -> v.toInt() } }
+    val data = loadFileLinesOfIntegers("day02-data.txt")
 
     fun isSafeReport(report: List<Int>) = report.windowed(2).let { pairs ->
         pairs.all { (a, b) -> b > a && b - a < 4 } || pairs.all { (a, b) -> a > b && a - b < 4 }
