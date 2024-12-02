@@ -4,7 +4,7 @@ import kotlinx.collections.immutable.toPersistentList
 import kotlin.math.absoluteValue
 
 fun main() {
-    val data = loadFileSplitLine("day01.txt")
+    val data = loadFileSplitLine("day01-data.txt")
     val firstList = data.map { it[0].toInt() }.toPersistentList()
     val secondList = data.map { it[1].toInt() }.toPersistentList()
 
