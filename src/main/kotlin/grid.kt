@@ -31,9 +31,9 @@ abstract class Grid(val xSize: Int, val ySize: Int) {
 
         override fun equals(other: Any?) = (other === this) || (other is Point && other.x == x && other.y == y)
 
-        override fun hashCode(): Int = x * 13 + y
+        override fun hashCode(): Int = x * 499 + y
 
-        override fun toString() = "pt($x, $y)"
+        override fun toString() = "($x, $y)"
     }
 
     fun allPoints(): Sequence<Point> = generateSequence({ Point(0, 0) }) { it.east() ?: it.nextSouthLine() }
