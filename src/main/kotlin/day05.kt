@@ -1,40 +1,37 @@
 fun main() {
-
-    fun loadPageRules(lines: Sequence<String>) =
-        lines.filter { it.contains('|') }.map { it.split('|').map { it.toInt() } }.map { it[0] to it[1] }.toList()
-
-    fun loadPrintOrdering(lines: Sequence<String>) =
-        lines.filter { it.contains(',') }.map { it.split(',').map { it.toInt() } }.toList()
-
-    fun part1(pageRules: List<Pair<Int, Int>>, printOrdering: List<List<Int>>) = printOrdering.sumOf { print ->
-        fun validateOrder(input: List<Int>) = (0..<input.indices.last).all { firstIx ->
-            (firstIx + 1..input.indices.last).all { secondIx -> pageRules.contains(input[firstIx] to input[secondIx]) }
+    data class PageOrder(val first: Int, val second: Int)
+    data class PrintList(val pages: List<Int>) {
+        fun isValid(orderRules: Set<PageOrder>) = (0..<pages.indices.last).all { firstIx ->
+            pages.drop(firstIx + 1).all { second -> orderRules.contains(PageOrder(pages[firstIx], second)) }
         }
 
-        if (validateOrder(print)) print[print.size / 2] else 0
-    }
-
-    fun part2(pageRules: List<Pair<Int, Int>>, printOrdering: List<List<Int>>): Int {
-        fun reOrder(input: List<Int>): List<Int> {
-            var text = input
-            (0..<input.indices.last).forEach { firstIx ->
-                (firstIx + 1..input.indices.last).forEach { secondIx ->
-                    if (pageRules.contains(Pair(text[secondIx], text[firstIx]))) {
-                        text = text.take(firstIx) + text[secondIx] + text.subList(
-                            firstIx,
-                            secondIx
-                        ) + text.drop(secondIx + 1)
+        fun reOrder(orderRules: Set<PageOrder>): PrintList {
+            var p = pages
+            (0..<p.indices.last).forEach { firstIx ->
+                (firstIx + 1..p.indices.last).forEach { secondIx ->
+                    if (orderRules.contains(PageOrder(p[secondIx], p[firstIx]))) {
+                        p = p.take(firstIx) + p[secondIx] + p.subList(firstIx, secondIx) + p.drop(secondIx + 1)
                     }
                 }
             }
-            return text
+            return PrintList(p)
         }
 
-        return printOrdering.map { it to reOrder(it) }.filter { it.first != it.second }.sumOf {
-            val reOrdered = reOrder(it.second)
-            reOrdered[reOrdered.size / 2]
-        }
+        fun middlePage() = pages[pages.size / 2]
     }
+
+    fun loadPageRules(lines: Sequence<String>) =
+        lines.filter { it.contains('|') }.map { it.split('|').map { it.toInt() } }.map { PageOrder(it[0], it[1]) }
+            .toSet()
+
+    fun loadPrintOrdering(lines: Sequence<String>) =
+        lines.filter { it.contains(',') }.map { it.split(',').map { it.toInt() } }.map { PrintList(it) }.toList()
+
+    fun part1(orderRules: Set<PageOrder>, printLists: List<PrintList>) =
+        printLists.filter { it.isValid(orderRules) }.sumOf { it.middlePage() }
+
+    fun part2(pageRules: Set<PageOrder>, printList: List<PrintList>) =
+        printList.filter { !it.isValid(pageRules) }.sumOf { it.reOrder(pageRules).middlePage() }
 
     val data = loadFileAsLines("day05-data.txt")
     val pageRules = loadPageRules(data)
