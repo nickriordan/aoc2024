@@ -18,10 +18,9 @@ fun main() {
             allPoints().flatMap { wordsFromPoint(it, word.length) }.count { it == word }
 
         val xMasWords = listOf("MAS", "SAM")
-        fun isXmasPoint(pt: Point): Boolean {
-            return (xMasWords.contains(pt.northWest()?.southEastSequence()?.let { wordFrom(it, 3) }) &&
-                    xMasWords.contains(pt.southWest()?.northEastSequence()?.let { wordFrom(it, 3) }))
-        }
+        fun isXmasPoint(pt: Point) =
+            xMasWords.contains(pt.northWest()?.southEastSequence()?.let { wordFrom(it, 3) }) &&
+                    xMasWords.contains(pt.southWest()?.northEastSequence()?.let { wordFrom(it, 3) })
 
         fun countXMasPoints() = allPoints().count { isXmasPoint(it) }
     }
