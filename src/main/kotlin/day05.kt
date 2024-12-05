@@ -5,17 +5,15 @@ fun main() {
             pages.drop(firstIx + 1).all { second -> orderRules.contains(PageOrder(pages[firstIx], second)) }
         }
 
-        fun reOrder(orderRules: Set<PageOrder>): PrintList {
-            var p = pages
-            (0..<p.indices.last).forEach { firstIx ->
-                (firstIx + 1..p.indices.last).forEach { secondIx ->
+        fun reOrder(orderRules: Set<PageOrder>) =
+            PrintList((0..<pages.indices.last).fold(pages) { p, firstIx ->
+                (firstIx + 1..p.indices.last).fold(p) { p, secondIx ->
                     if (orderRules.contains(PageOrder(p[secondIx], p[firstIx]))) {
-                        p = p.take(firstIx) + p[secondIx] + p.subList(firstIx, secondIx) + p.drop(secondIx + 1)
-                    }
+                        p.take(firstIx) + p[secondIx] + p.subList(firstIx, secondIx) + p.drop(secondIx + 1)
+                    } else
+                        pages
                 }
-            }
-            return PrintList(p)
-        }
+            })
 
         fun middlePage() = pages[pages.size / 2]
     }
