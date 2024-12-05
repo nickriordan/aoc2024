@@ -20,9 +20,8 @@ fun main() {
         fun middlePage() = pages[pages.size / 2]
     }
 
-    fun loadPageRules(lines: Sequence<String>) =
-        lines.filter { it.contains('|') }.map { it.split('|').map { it.toInt() } }.map { PageOrder(it[0], it[1]) }
-            .toSet()
+    fun loadPageRules(inp: Sequence<String>) =
+        inp.filter { it.contains('|') }.map { it.split('|').map { it.toInt() } }.map { PageOrder(it[0], it[1]) }.toSet()
 
     fun loadPrintOrdering(lines: Sequence<String>) =
         lines.filter { it.contains(',') }.map { it.split(',').map { it.toInt() } }.map { PrintList(it) }.toList()
