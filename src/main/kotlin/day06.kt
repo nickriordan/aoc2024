@@ -3,6 +3,10 @@ fun main() {
 
         inner class Guard(val location: Point, val direction: Char) {
             override fun toString() = "$direction $location"
+            override fun equals(other: Any?) = other === this ||
+                    (other is Guard && other.location == location && other.direction == direction)
+
+            override fun hashCode() = location.hashCode() + direction.hashCode()
         }
 
         val guardInitialPosition =
@@ -10,33 +14,35 @@ fun main() {
                 .first { it.second in listOf('<', '>', '^', 'v') }.let { Guard(it.first, it.second) }
 
         fun getPath(at: (Point) -> Char) = generateSequence({ guardInitialPosition }) { guard ->
-            // Took a while to figure out you could get the situation where you need to rotate more than
-            // once as you get blocked by the new obstacle
-            fun nextLocation(direction: Char): Guard? =
+            // Took a while to figure out you could get the situation where you need to rotate more than once
+            fun next(direction: Char): Guard? =
                 when (direction) {
-                    '^' -> guard.location.north()?.let { if (at(it) == '#') nextLocation('>') else Guard(it, direction) }
-                    'v' -> guard.location.south()?.let { if (at(it) == '#') nextLocation('<') else Guard(it, direction) }
-                    '>' -> guard.location.east()?.let { if (at(it) == '#') nextLocation('v') else Guard(it, direction) }
-                    '<' -> guard.location.west()?.let { if (at(it) == '#') nextLocation('^') else Guard(it, direction) }
+                    '^' -> guard.location.north()?.let { if (at(it) == '#') next('>') else Guard(it, direction) }
+                    'v' -> guard.location.south()?.let { if (at(it) == '#') next('<') else Guard(it, direction) }
+                    '>' -> guard.location.east()?.let { if (at(it) == '#') next('v') else Guard(it, direction) }
+                    '<' -> guard.location.west()?.let { if (at(it) == '#') next('^') else Guard(it, direction) }
                     else -> throw Exception()
                 }
 
-            nextLocation(guard.direction)
+            next(guard.direction)
         }
 
-        fun originalPath() = getPath { pt: Point -> data[pt.y][pt.x] }.map { it.location }
+        fun originalPath() = getPath { pt: Point -> data[pt.y][pt.x] }.map { it.location }.toSet()
 
-        fun part1() = originalPath().toSet().size
+        fun isPathLoop(path: Sequence<Guard>): Boolean {
+            val seen = mutableSetOf<Guard>()
+            val iter = path.iterator()
+            while (iter.hasNext())
+                if (!seen.add(iter.next()))
+                    return true
 
-        fun part2(): Int {
-            val potentialLocations = originalPath()
+            return false
+        }
 
-            // TODO: we should look for the first two elements of the path
-            val size = originalPath().count() * 10
-            return potentialLocations.toSet().filter { location ->
-                val path = getPath { pt: Point -> if (pt == location) '#' else data[pt.y][pt.x] }
-                path.take(size).count() == size
-            }.size
+        fun part1() = originalPath().size
+
+        fun part2() = originalPath().count { location ->
+            isPathLoop(getPath { pt: Point -> if (pt == location) '#' else data[pt.y][pt.x] })
         }
     }
 
