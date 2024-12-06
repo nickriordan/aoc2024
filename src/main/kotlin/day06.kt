@@ -10,6 +10,8 @@ fun main() {
                 .first { it.second in listOf('<', '>', '^', 'v') }.let { Guard(it.first, it.second) }
 
         fun getPath(at: (Point) -> Char) = generateSequence({ guardInitialPosition }) { guard ->
+            // Took a while to figure out you could get the situation where you need to rotate more than
+            // once as you get blocked by the new obstacle
             fun nextLocation(direction: Char): Guard? =
                 when (direction) {
                     '^' -> guard.location.north()?.let { if (at(it) == '#') nextLocation('>') else Guard(it, direction) }
@@ -22,17 +24,16 @@ fun main() {
             nextLocation(guard.direction)
         }
 
-        fun part1() = getPath { pt: Point -> data[pt.y][pt.x] }.map { it.location }.toSet().size
+        fun originalPath() = getPath { pt: Point -> data[pt.y][pt.x] }.map { it.location }
+
+        fun part1() = originalPath().toSet().size
 
         fun part2(): Int {
-            val potentialLocations = (0..<ySize).flatMap { y ->
-                (0..<xSize).mapNotNull { x -> if (data[y][x] == '.') Point(x, y) else null }
-            }
+            val potentialLocations = originalPath()
 
             // TODO: we should look for the first two elements of the path
-            // TODO: only need to look along the initial path for options
-            val size = xSize * ySize
-            return potentialLocations.filter { location ->
+            val size = originalPath().count() * 10
+            return potentialLocations.toSet().filter { location ->
                 val path = getPath { pt: Point -> if (pt == location) '#' else data[pt.y][pt.x] }
                 path.take(size).count() == size
             }.size
