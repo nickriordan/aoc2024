@@ -5,7 +5,7 @@ fun main() {
 
     class LabGrid(private val data: List<String>) : Grid(data[0].length, data.size) {
         fun pathSequence(at: (Point) -> Char) = generateSequence(
-            { allPoints().first { at(it) in directions }.let { GuardPos(it, at(it)) } }, { guard ->
+            { allPoints().first { data[it.y][it.x] in directions }.let { GuardPos(it, data[it.y][it.x]) } }, { guard ->
                 fun move(direction: Char): GuardPos? = when (direction) {
                     '^' -> guard.location.north()?.let { if (at(it) == '#') move('>') else GuardPos(it, direction) }
                     'v' -> guard.location.south()?.let { if (at(it) == '#') move('<') else GuardPos(it, direction) }
