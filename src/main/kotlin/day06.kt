@@ -7,7 +7,7 @@ fun main() {
 
         val guardInitial = allPoints().first { data[it.y][it.x] in directions }.let { Guard(it, data[it.y][it.x]) }
 
-        fun getPath(at: (Point) -> Char) = generateSequence({ guardInitial }) { guard ->
+        fun pathSequence(at: (Point) -> Char) = generateSequence({ guardInitial }) { guard ->
             fun move(direction: Char): Guard? = when (direction) {
                 '^' -> guard.location.north()?.let { if (at(it) == '#') move('>') else Guard(it, direction) }
                 'v' -> guard.location.south()?.let { if (at(it) == '#') move('<') else Guard(it, direction) }
@@ -18,13 +18,13 @@ fun main() {
             move(guard.direction)
         }
 
-        fun originalPath() = getPath { pt: Point -> data[pt.y][pt.x] }.map { it.location }.toSet()
+        fun getPath() = pathSequence { pt: Point -> data[pt.y][pt.x] }.map { it.location }.toSet()
 
         fun isPathLoop(path: Sequence<Guard>) = mutableSetOf<Guard>().let { seen -> path.any { !seen.add(it) } }
 
-        fun part1() = originalPath().size
+        fun part1() = getPath().size
 
-        fun part2() = originalPath().count { loc -> isPathLoop(getPath { if (it == loc) '#' else data[it.y][it.x] }) }
+        fun part2() = getPath().count { loc -> isPathLoop(pathSequence { if (it == loc) '#' else data[it.y][it.x] }) }
     }
 
     val grid = LabGrid(loadFileAsLines("day06-data.txt").toList())
