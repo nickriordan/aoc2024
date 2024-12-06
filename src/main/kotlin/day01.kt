@@ -4,7 +4,7 @@ import kotlin.math.absoluteValue
 
 fun main() {
     val (list1, list2) = loadFileLinesOfIntegers("day01-data.txt")
-        .fold(listOf(emptyList<Int>(), emptyList<Int>())) { r, l -> listOf(r[0] + l[0], r[1] + l[1]) }
+        .fold(listOf(emptyList(), emptyList<Int>())) { r, l -> listOf(r[0] + l[0], r[1] + l[1]) }
 
     fun part1() = list1.sorted().zip(list2.sorted()).sumOf { (a, b) -> (a - b).absoluteValue }
 

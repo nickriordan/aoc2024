@@ -6,8 +6,8 @@ fun main() {
         }
 
         fun reOrder(pageOrderRules: Set<PageOrder>) =
-            PrintList((0..<pages.indices.last).fold(pages) { p, firstIx ->
-                (firstIx + 1..p.indices.last).fold(p) { p, secondIx ->
+            PrintList((0..<pages.indices.last).fold(pages) { pg, firstIx ->
+                (firstIx + 1..pg.indices.last).fold(pg) { p, secondIx ->
                     if (pageOrderRules.contains(PageOrder(p[secondIx], p[firstIx]))) {
                         p.take(firstIx) + p[secondIx] + p.subList(firstIx, secondIx) + p.drop(secondIx + 1)
                     } else
@@ -19,10 +19,10 @@ fun main() {
     }
 
     fun loadPageOrderRules(inp: Sequence<String>) =
-        inp.filter { it.contains('|') }.map { it.split('|').map { it.toInt() } }.map { PageOrder(it[0], it[1]) }.toSet()
+        inp.filter { it.contains('|') }.map { it.split('|') }.map { PageOrder(it[0].toInt(), it[1].toInt()) }.toSet()
 
     fun loadPrintLists(lines: Sequence<String>) =
-        lines.filter { it.contains(',') }.map { it.split(',').map { it.toInt() } }.map { PrintList(it) }.toList()
+        lines.filter { it.contains(',') }.map { it.split(',').map { v -> v.toInt() } }.map { PrintList(it) }.toList()
 
     fun part1(orderRules: Set<PageOrder>, printLists: List<PrintList>) =
         printLists.filter { it.isValid(orderRules) }.sumOf { it.middlePage() }
