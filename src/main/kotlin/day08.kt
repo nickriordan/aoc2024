@@ -8,14 +8,10 @@ fun main() {
                 it.first !in ".#"
             }.groupBy({ (ch, _) -> ch }, { (_, pt) -> pt })
 
-        fun allPairOfPoints(points: List<Point>) =
-            points.indices.flatMap { ix1 ->
-                (ix1 + 1..points.lastIndex).map { ix2 -> points[ix1] to points[ix2] }
-            }
 
         fun findAntiNodes(antiNodesOnPath: (Point, Point) -> List<Point>): Set<Point> =
             antennasLocationsByFreq().flatMap { (_, locations) ->
-                allPairOfPoints(locations).flatMap { (p1, p2) -> antiNodesOnPath(p1, p2) }
+                locations.allPermutations().flatMap { (p1, p2) -> antiNodesOnPath(p1, p2) }
             }.toSet()
 
         fun part1() = findAntiNodes { pt1, pt2 ->

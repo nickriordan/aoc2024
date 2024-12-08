@@ -41,4 +41,9 @@ abstract class Grid(val xSize: Int, val ySize: Int) {
     }
 
     fun allPoints(): Sequence<Point> = generateSequence({ Point(0, 0) }) { it.east() ?: it.nextSouthLine() }
+
+    fun List<Point>.allPermutations() = indices.flatMap { ix1 ->
+        (ix1 + 1..lastIndex).map { ix2 -> this[ix1] to this[ix2] }
+    }
+
 }
