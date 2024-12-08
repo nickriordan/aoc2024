@@ -29,6 +29,9 @@ abstract class Grid(val xSize: Int, val ySize: Int) {
 
         fun isValid() = x >= 0 && y >= 0 && x < xSize && y < ySize
 
+        operator fun plus(other: Point) = Point(x + other.x, y + other.y)
+        operator fun minus(other: Point) = Point(x - other.x, y - other.y)
+
         override fun equals(other: Any?) = (other === this) || (other is Point && other.x == x && other.y == y)
 
         override fun hashCode(): Int = x * 499 + y
