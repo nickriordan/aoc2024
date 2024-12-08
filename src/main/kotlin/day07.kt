@@ -3,14 +3,13 @@ fun main() {
         fun calc(total: Long, remain: List<Long>): Boolean = if (remain.isEmpty())
             (total == target)
         else {
-            calc(total + remain.first(), remain.drop(1)) ||
-                    calc(total * remain.first(), remain.drop(1)) ||
+            calc(total + remain.first(), remain.drop(1)) || calc(total * remain.first(), remain.drop(1)) ||
                     (allowConcat && calc((total.toString() + remain.first()).toLong(), remain.drop(1)))
         }
         return calc(0, src)
     }
 
-    val data = loadFileAsLines("day07-data.txt")
+    val data = loadFileAsLines("day07-test-data.txt")
         .map { it.split(": ") }
         .map { it[0].toLong() to it[1].split(" ").map { s -> s.toLong() } }.toList()
 

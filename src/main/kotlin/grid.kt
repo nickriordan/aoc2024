@@ -28,6 +28,7 @@ abstract class Grid(val xSize: Int, val ySize: Int) {
         internal fun nextSouthLine() = if (y < ySize - 1) Point(0, y + 1) else null
 
         fun isValid() = x >= 0 && y >= 0 && x < xSize && y < ySize
+        fun validOrNull() = if (isValid()) this else null
 
         operator fun plus(other: Point) = Point(x + other.x, y + other.y)
         operator fun minus(other: Point) = Point(x - other.x, y - other.y)
