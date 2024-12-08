@@ -1,16 +1,16 @@
 fun main() {
 
     class CityMap(private val data: List<String>) : Grid(data[0].length, data.size) {
-        fun antennaAt(pt: Point) = data[pt.y][pt.x]
+        private fun antennaAt(pt: Point) = data[pt.y][pt.x]
 
-        fun antennasLocationsByFreq() = allPoints()
+        private fun freqToAntennas() = allPoints()
             .map { pt -> antennaAt(pt) to pt }
             .filter { it.first !in ".#" }
             .groupBy({ (ch, _) -> ch }, { (_, pt) -> pt })
 
-        fun antennaLocationPairs() = antennasLocationsByFreq().flatMap { (_, locations) -> locations.allPermutations() }
+        private fun antennaLocationPairs() = freqToAntennas().flatMap { (_, locations) -> locations.allPermutations() }
 
-        fun findCountAntiNodes(antiNodesOnPath: (Point, Point) -> List<Point>) = antennaLocationPairs()
+        private fun findCountAntiNodes(antiNodesOnPath: (Point, Point) -> List<Point>) = antennaLocationPairs()
             .flatMap { (p1, p2) -> antiNodesOnPath(p1, p2) }
             .toSet()
             .count()
