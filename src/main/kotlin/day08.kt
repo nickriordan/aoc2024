@@ -8,23 +8,22 @@ fun main() {
                 it.first !in ".#"
             }.groupBy({ (ch, _) -> ch }, { (_, pt) -> pt })
 
-
-        fun findAntiNodes(antiNodesOnPath: (Point, Point) -> List<Point>): Set<Point> =
+        fun findCountAntiNodes(antiNodesOnPath: (Point, Point) -> List<Point>) =
             antennasLocationsByFreq().flatMap { (_, locations) ->
                 locations.allPermutations().flatMap { (p1, p2) -> antiNodesOnPath(p1, p2) }
-            }.toSet()
+            }.toSet().count()
 
-        fun part1() = findAntiNodes { pt1, pt2 ->
+        fun part1() = findCountAntiNodes { pt1, pt2 ->
             val offset = pt1 - pt2
             listOf(pt1 + offset, pt2 - offset).filter { it.isValid() }
-        }.count()
+        }
 
-        fun part2() = findAntiNodes { pt1, pt2 ->
+        fun part2() = findCountAntiNodes { pt1, pt2 ->
             val offset = pt1 - pt2
             listOf(pt1, pt2) +
                     generateSequence({ (pt1 + offset).validOrNull() }) { (it + offset).validOrNull() }.toList() +
                     generateSequence({ (pt2 - offset).validOrNull() }) { (it - offset).validOrNull() }.toList()
-        }.count()
+        }
     }
 
     val map = CityMap(loadFileAsLines("day08-data.txt").toList())
